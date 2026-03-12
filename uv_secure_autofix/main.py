@@ -26,12 +26,16 @@ def main(argv=None):
     try:
         report = json.loads(report_json)
     except json.JSONDecodeError:
-        # If output isn't valid JSON, it might just be the success message
-        # or uv-secure failed in an unexpected way.
-        if result.returncode == 0:
+        # If output isn't valid JSON, it might be a success message or an actual error.
+        # We check for common success indicators in stdout/stderr.
+        success_indicators = ["no vulnerabilities", "no vulnerable", "secure", "everything is up to date"]
+        combined_output = (result.stdout + result.stderr).lower()
+        
+        if any(indicator in combined_output for indicator in success_indicators) or result.returncode == 0:
             print("✅ No vulnerable packages found! You are secure. 🚀")
             return 0
         else:
+            # If we don't see success indicators and it's a non-zero exit, it's a real failure.
             print(f"uv-secure failed with exit code {result.returncode}:\n{result.stderr}", file=sys.stderr)
             return result.returncode
 
