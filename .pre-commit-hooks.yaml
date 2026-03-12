@@ -1,7 +1,7 @@
 -   id: uv-secure-autofix
     name: Auto-fix uv.lock vulnerabilities
     description: Scans uv.lock using uv-secure and automatically upgrades vulnerable dependencies using uv lock.
-    entry: fix-vul.sh
+    entry: ./fix-vul.sh
     language: script
     pass_filenames: false
     files: ^(uv\.lock|pyproject\.toml)$
